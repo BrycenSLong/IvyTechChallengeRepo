@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Joke Generator</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Random Joke Generator</h1>
+        <div id="joke-setup"></div>
+        <div id="joke-punchline" class="hidden"></div>
+        <div class="button-container">
+            <button onclick="getNewJoke()">Get New Joke</button>
+            <button id="punchline-button" onclick="showPunchline()">Show Punchline</button>
+        </div>
+    </div>
+
+    <script>
+        let currentJoke = null;
+
+        function getNewJoke() {
+            document.getElementById('joke-punchline').classList.add('hidden');
+            document.getElementById('punchline-button').disabled = true;
+            
+            fetch('/api/joke')
+                .then(response => response.json())
+                .then(data => {
+                    currentJoke = data;
+                    document.getElementById('joke-setup').textContent = data.setup;
+                    document.getElementById('joke-punchline').textContent = data.punchline;
+                    document.getElementById('punchline-button').disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('joke-setup').textContent = 'Failed to load joke';
+                });
+        }
+
+        function showPunchline() {
+            document.getElementById('joke-punchline').classList.remove('hidden');
+        }
+
+        // Load initial joke
+        getNewJoke();
+    </script>
+</body>
+</html>
